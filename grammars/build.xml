@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<project name="ve" default="all" basedir=".">
+
+<!-- Site dependent values;modify as needed; must be absolute path  -->
+<!--property name="prefix" value="/usr/local"/-->
+    <!-- Watch out if this is under cygwin -->
+    <!--property name="prefix" value="c:/cygwin/usr/local"/-->
+
+<!-- Compiler Settings -->
+<property name="compile.deprecation" value="off"/>
+
+<property name="compiler.dir" value="../compiler/src/main/java/ucar/ve/compiler/"/>
+
+<target name="all" depends="clean,makeparser,install"/>
+
+<!-- This task documents how to build
+     the Java parser files from scratch. It should normally only
+     be used by developers. It requires bison-3.0 or later
+-->
+<target name="makeparser">
+    <exec executable="bison"> <!--Should execute in this directory -->
+      <arg value="-t"/>
+      <arg value="-v"/>
+      <arg value="ve.y"/>
+      <arg value="-o"/>
+      <arg value="VEParserBody.java"/>
+   </exec>
+</target>
+
+<target name="clean">
+    <delete failonerror="false" file="VEParserBody.java"/>
+    <delete failonerror="false" file="VEParserBody.output"/>
+</target>
+
+<target name="install">
+    <delete  file="${compiler.dir}/VEParserBody.java" failonerror="false"/>
+    <move file="VEParserBody.java" todir="${compiler.dir}" overwrite="true"/>
+</target>
+
+</project>
