@@ -48,11 +48,8 @@ public class Semantics
     {
         for(int i = 0;i < program.size();i++) {
             Action action = program.get(i);
-            String realname = action.verb.getVerb();
-            // Compute the canoninical class name
-            realname = realname.substring(0, 1).toUpperCase()
-                + realname.substring(1).toLowerCase();
-            action.verb = Verbs.verbs.get(realname);
+            String name = action.verb.getVerb();
+            action.verb = Verbs.verbs.get(name.toLowerCase());
             if(action.verb == null)
                 throw new CompileException("Unknown verb: " + action.verb)
                     .setPosition(action.getPosition());
@@ -90,8 +87,8 @@ public class Semantics
         for(int i = 0;i < imports.size();i++) {
             Action imp = imports.get(i);
             ArgList args = imp.args;
-            for(i = 0;i < args.size();i++) {
-                Arg arg = args.get(i);
+            for(int j = 0;j < args.size();j++) {
+                Arg arg = args.get(j);
                 Verbs.importVerbs(arg.value);
             }
         }
@@ -111,12 +108,12 @@ public class Semantics
             if(action.args.size() != action.verb.signature.size())
                 throw new CompileException("Incorrect number of arguments: "
                     + action).setPosition(action.getPosition());
-            for(i = 0;i < action.args.size();i++) {
-                Arg arg = action.args.get(i);
-                ArgType argtype = action.verb.signature.get(i);
+            for(int j = 0;j < action.args.size();j++) {
+                Arg arg = action.args.get(j);
+                ArgType argtype = action.verb.signature.get(j);
                 if(Arg.compatible(arg.type, argtype))
                     throw new CompileException("Argument type mismatch at "
-                        + i).setPosition(action.getPosition());
+                        + j).setPosition(action.getPosition());
             }
         }
     }

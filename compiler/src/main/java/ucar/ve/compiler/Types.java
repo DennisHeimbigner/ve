@@ -44,6 +44,16 @@ static public class Arg extends CompileInfo
 	    return false;
 	return false;	
     }
+
+    public String toString()
+    {
+        StringBuilder b = new StringBuilder();
+        b.append(type.name());
+        b.append("(");
+        b.append(value);
+        b.append(")");
+        return b.toString();
+    }
 }
 
 static public class ActionList extends ArrayList<Action>{}

@@ -24,7 +24,6 @@ public class Verb extends CompileInfo
 
     protected String verb = null;
     protected List<ArgType> signature = null;
-    protected boolean backtrack = false;
 
     //////////////////////////////////////////////////
     // Constructor(s)
@@ -45,8 +44,7 @@ public class Verb extends CompileInfo
 
     public Verb(String verb, List<ArgType> signature) // n-ary
     {
-        this.signature = signature;
-        this.backtrack = backtrack;
+        this.signature = (signature == null ? new ArrayList<ArgType>() : signature);
         this.verb = verb;
     }
 
@@ -70,13 +68,4 @@ public class Verb extends CompileInfo
         return this.signature;
     }
 
-    public boolean isBacktracking()
-    {
-        return this.backtrack;
-    }
-
-    public void setBackTracking(boolean tf)
-    {
-        this.backtrack = tf;
-    }
 }

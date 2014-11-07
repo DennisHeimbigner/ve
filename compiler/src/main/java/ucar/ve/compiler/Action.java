@@ -13,14 +13,21 @@ public class Action extends CompileInfo
     public ArgList args;
     public VELexer.Position pos = null;
     public Action(Verb verb, ArgList args)
-	{this.verb = verb; this.args=args;}
+	{
+        if(verb == null) {
+            int x = 0;
+        }
+
+        this.verb = verb;
+        this.args=args;
+    }
     public void setPosition(VELexer.Position pos) {this.pos = pos; }
 
     public String toString()
     {
 	StringBuilder buf = new StringBuilder();
 	buf.append(verb.toString());
-	buf.append(")");
+	buf.append("(");
 	for(int i=0;i<args.size();i++) {
 	    Arg arg = args.get(i);
 	    if(i > 0) buf.append(",");
