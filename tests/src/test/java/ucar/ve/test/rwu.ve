@@ -1,7 +1,7 @@
-.startOfLine 
+.startOfLine
 .then "http"
 .maybe "s"
 .then "://"
 .maybe "www."
 .anythingButNot " "
-.endOfLine 
+.endOfLine

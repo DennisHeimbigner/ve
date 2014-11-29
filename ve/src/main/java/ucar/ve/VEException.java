@@ -4,44 +4,43 @@
 
 //////////////////////////////////////////////////
 
-package ucar.ve.compiler;
+package ucar.ve;
 
-public class CompileException extends java.io.IOException
+public class VEException extends java.io.IOException
 {
     int lineno = -1;
     int charno = -1;
 
-    public CompileException()
+    public VEException()
     {
 	super();
     }
 
-    public CompileException(String msg)
+    public VEException(String msg)
     {
         super(msg);
     }
 
-    public CompileException(Throwable e)
+    public VEException(Throwable e)
     {
         super(e);
     }
 
-    public CompileException(String msg, Throwable e)
+    public VEException(String msg, Throwable e)
     {
         super(msg, e);
     }
 
-    public CompileException setPosition(int lineno, int charno)
+    public VEException setPosition(int lineno, int charno)
     {
         this.lineno = lineno;
         this.charno = charno;
         return this;
     }
 
-    public CompileException setPosition(VELexer.Position pos)
+    public VEException setPosition(Types.Position p)
     {
-        this.lineno = pos.lineno;
-        this.charno = pos.charno;
+        setPosition(p.lineno,p.charno);
         return this;
     }
 

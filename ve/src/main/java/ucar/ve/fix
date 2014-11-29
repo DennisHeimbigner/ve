@@ -1,0 +1,10 @@
+pushd compiler
+J=`ls -1 *.java | tr '\r\n' '  '`
+echo "$J"
+popd
+for j in $J ; do
+rm -f ./$j
+sed -e 's/ucar.ve.compiler/ucar.ve/g' <compiler/$j >./$j
+done
+
+
