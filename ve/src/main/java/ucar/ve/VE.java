@@ -50,6 +50,7 @@ public class VE
         this.config = new Configuration(configuration);
         // Validate and initialize the configuration
         validate(config);
+        parse();
     }
 
     protected void
@@ -73,6 +74,24 @@ public class VE
             cfg.verbs = new ArrayList<VerbDef>();
     }
 
+    protected void
+    parse()
+        throws VEException
+    {
+        try {
+            if(this.config.input == null || this.config.input.length() == 0)
+                throw new VEException("Empty input");
+            // Create the input parser
+            Parser parser = (Parser) Util.createClassInstance(config.format, this);
+            if(config.parsedebug)
+                parser.setDebugLevel(1);
+            parser.parse(this.config.input);
+            this.program = parser.getProgram();
+        } catch (Exception e) {
+            Util.runtimeCheck(e);
+            throw new VEException(e);
+        }
+    }
     //////////////////////////////////////////////////
     // Execution
 
@@ -80,24 +99,9 @@ public class VE
     evaluate(Object state)
         throws VEException
     {
-        try {
-            if(this.config.input == null || this.config.input.length() == 0)
-                throw new VEException("Empty input");
-            // Create the input parser
-            Parser parser = (Parser) Util.createClassInstance(config.format,this);
-            if(config.parsedebug)
-                parser.setDebugLevel(1);
-            parser.parse(this.config.input);
-            this.program = parser.getProgram();
-
-            for(int i = 0;i < program.size();i++) {
-                Action action = program.get(i);
-                action.execute(state);
-            }
-
-        } catch (Exception e) {
-            Util.runtimeCheck(e);
-            throw new VEException(e);
+        for(int i = 0;i < program.size();i++) {
+            Action action = program.get(i);
+            action.execute(state);
         }
     }
 
@@ -116,7 +120,7 @@ public class VE
         return this.program;
     }
 
-    public Map<String,Verb>
+    public Map<String, Verb>
     getVerbs()
     {
         return this.verbs;

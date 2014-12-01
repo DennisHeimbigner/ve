@@ -16,23 +16,21 @@ public class VEParser extends Parser
     // Constants
 
     /**
-     * Escape Character
+     * Significant Characters
      */
     static final protected char ESCAPE = '\\';
-
-    /**
-     * Begin comment Character
-     */
     static final protected char COMMENTCHAR = '#';
-
     static final char NULCHAR = '\0';
-
+    static final char LBRACE = '{';
+    static final char RBRACE = '}';
+    static final char LPAREN = '(';
+    static final char RPAREN = ')';
     /**
      * Legal first char of a word
      */
     static final public String WORDCHAR1 =
         "abcdefghijklmnopqrstuvwxyz"
-            + "abcdefghijklmnopqrstuvwxyz" .toUpperCase()
+            + "abcdefghijklmnopqrstuvwxyz".toUpperCase()
             + "0123456789"
             + "_$+-";
 
@@ -310,17 +308,17 @@ public class VEParser extends Parser
         }
     }
 
-//////////////////////////////////////////////////
-// Parser
+    //////////////////////////////////////////////////
+    // Parser
 
-//////////////////////////////////////////////////
-// Parser state
+    //////////////////////////////////////////////////
+    // Parser state
 
     Lexer lexer = null;
 
 
-//////////////////////////////////////////////////
-// Constructor(s)
+    //////////////////////////////////////////////////
+    // Constructor(s)
 
     public VEParser(VE ve)
         throws VEException
@@ -328,8 +326,8 @@ public class VEParser extends Parser
         super(ve);
     }
 
-//////////////////////////////////////////////////
-// Abstract Parser API
+    //////////////////////////////////////////////////
+    // Abstract Parser API
 
     @Override
     public void setDebugLevel(int level)
@@ -345,9 +343,21 @@ public class VEParser extends Parser
         this.program = new ActionList();
         StringBuilder yytext = new StringBuilder();
         Position yypos = new Position(0, 0);
-        Action action = null;
-        int token = NONE;
+        ActionList actions = new ActionList();
+        parseR(actions, yytext, yypos);
+        this.program = actions;
+    }
+
+    /**
+     * Recursive parser
+     */
+    protected void
+    parseR(ActionList actions, StringBuilder yytext, Position yypos)
+        throws VEException
+    {
         String errmsg = null;
+        int token = NONE;
+        Action action = null;
 
         // Non-recursive parser read action per loop
         actionloop:
@@ -355,13 +365,16 @@ public class VEParser extends Parser
             token = lexer.yylex(yytext, yypos);
             if(cfg.parsedebug)
                 System.err.println("parser: reading token: " + dumptoken(token, yytext.toString()));
-            if(token == EOF)
+            if(token == EOF) {
                 break actionloop;
+            }
             switch (token) {
             case '.': // => EOL
             case '\n': // => EOL
                 continue actionloop;
-
+            case RBRACE:
+                lexer.pushback();
+                break actionloop;
             case WORD: // Verb
                 String name = yytext.toString();
                 Verb verb = ve.getVerbs().get(name.toLowerCase());
@@ -410,13 +423,23 @@ public class VEParser extends Parser
             case '\n':
                 more = false;
                 break;
-            case '(':
+            case LBRACE:
+                ActionList block = new ActionList();
+                parseR(block, yytext, yypos);
+                token = lexer.yylex(yytext, yypos);
+                if(token != RBRACE)
+                    errmsg = "Unclosed block";
+                break;
+            case RBRACE:
+                errmsg = "Too many " + RBRACE;
+                break;
+            case LPAREN:
                 if(parenstate != ParenState.NONE)
                     errmsg = "Too many parentheses";
                 else
                     parenstate = ParenState.LEFT;
                 break;
-            case ')':
+            case RPAREN:
                 switch (parenstate) {
                 case NONE:
                     errmsg = "Parentheses mismatch";

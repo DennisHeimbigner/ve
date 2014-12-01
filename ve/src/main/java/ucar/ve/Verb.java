@@ -22,6 +22,7 @@ abstract public class Verb
     // Constructor(s)
 
     public Verb(String name, ArgType... argtypes)
+        throws VEException
     {
         this.name = name;
         this.signature = new Signature();

@@ -87,7 +87,7 @@ public class Types
 
     static public enum ArgType
     {
-        WORD, STRING, NUMBER;
+        WORD, STRING, NUMBER, BLOCK;
         static public ArgType DEFAULT = STRING;
     }
 
@@ -210,7 +210,7 @@ public class Types
 
         public Configuration(Configuration cfg)
         {
-            this.input = cfg.input.trim();
+            this.input = (cfg.input != null ? cfg.input.trim() : null);
             this.output = cfg.output;
             this.format = cfg.format;
             this.verbs = cfg.verbs;

@@ -11,7 +11,7 @@ import java.util.*;
 
 import static ucar.ve.Types.*;
 
-abstract public class Test1Verbs
+abstract public class Test2Verbs
 {
     static final String LPAREN = "(";
     static final String RPAREN = ")";
@@ -25,29 +25,29 @@ abstract public class Test1Verbs
 
     static {
         verbs = new ArrayList<VerbDef>();
-        verbs.add(new VerbDef(Startofline.VerbName, Startofline.class));
-        verbs.add(new VerbDef(Endofline.VerbName, Endofline.class));
-        verbs.add(new VerbDef(Find.VerbName, Find.class));
-        verbs.add(new VerbDef(Then.VerbName, Then.class));
-        verbs.add(new VerbDef(Maybe.VerbName, Maybe.class));
-        verbs.add(new VerbDef(Anything.VerbName, Anything.class));
-        verbs.add(new VerbDef(Anythingbut.VerbName, Anythingbut.class));
-        verbs.add(new VerbDef(Anythingbutnot.VerbName, Anythingbutnot.class));
-        verbs.add(new VerbDef(Something.VerbName, Something.class));
-        verbs.add(new VerbDef(Somethingbut.VerbName, Somethingbut.class));
-        verbs.add(new VerbDef(Linebreak.VerbName, Linebreak.class));
-        verbs.add(new VerbDef(BR.VerbName, BR.class));
-        verbs.add(new VerbDef(Tab.VerbName, Tab.class));
-        verbs.add(new VerbDef(Word.VerbName, Word.class));
-        verbs.add(new VerbDef(Anyof.VerbName, Anyof.class));
-        verbs.add(new VerbDef(Any.VerbName, Any.class));
-        verbs.add(new VerbDef(Or.VerbName, Or.class));
-        verbs.add(new VerbDef(Begincapture.VerbName, Begincapture.class));
-        verbs.add(new VerbDef(Endcapture.VerbName, Endcapture.class));
-        verbs.add(new VerbDef(Begin.VerbName, Begin.class));
-        verbs.add(new VerbDef(End.VerbName, End.class));
-        verbs.add(new VerbDef(Either.VerbName, Either.class));
-        verbs.add(new VerbDef(Stop.VerbName, Stop.class));
+        verbs.add(new VerbDef("startofline", Startofline.class));
+        verbs.add(new VerbDef("endofline", Endofline.class));
+        verbs.add(new VerbDef("find", Find.class));
+        verbs.add(new VerbDef("then", Then.class));
+        verbs.add(new VerbDef("maybe", Maybe.class));
+        verbs.add(new VerbDef("anything", Anything.class));
+        verbs.add(new VerbDef("anythingbut", Anythingbut.class));
+        verbs.add(new VerbDef("anythingbutnot", Anythingbutnot.class));
+        verbs.add(new VerbDef("something", Something.class));
+        verbs.add(new VerbDef("somethingbut", Somethingbut.class));
+        verbs.add(new VerbDef("linebreak", Linebreak.class));
+        verbs.add(new VerbDef("br", BR.class));
+        verbs.add(new VerbDef("tab", Tab.class));
+        verbs.add(new VerbDef("word", Word.class));
+        verbs.add(new VerbDef("anyof", Anyof.class));
+        verbs.add(new VerbDef("any", Any.class));
+        verbs.add(new VerbDef("or", Or.class));
+        verbs.add(new VerbDef("begincapture", Begincapture.class));
+        verbs.add(new VerbDef("endcapture", Endcapture.class));
+        verbs.add(new VerbDef("begin", Begin.class));
+        verbs.add(new VerbDef("end", End.class));
+        verbs.add(new VerbDef("either", Either.class));
+        verbs.add(new VerbDef("stop", Stop.class));
     }
 
     //////////////////////////////////////////////////
@@ -58,11 +58,10 @@ abstract public class Test1Verbs
 
     static public class Startofline extends Verb
     {
-        static public final String VerbName = "startofline";
-
         public Startofline()
+	    throws VEException
         {
-            super(VerbName);
+            super("startofline");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -74,11 +73,10 @@ abstract public class Test1Verbs
 
     static public class Endofline extends Verb
     {
-        static public final String VerbName = "endofline";
-
         public Endofline()
+	    throws VEException
         {
-            super(VerbName);
+            super("endofline");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -90,11 +88,10 @@ abstract public class Test1Verbs
 
     static public class Find extends Verb
     {
-        static public final String VerbName = "find";
-
         public Find()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
+            super("find", ArgType.STRING);
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -106,11 +103,10 @@ abstract public class Test1Verbs
 
     static public class Then extends Verb
     {
-        static public final String VerbName = "then";
-
         public Then()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
+            super("then", ArgType.STRING);
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -122,11 +118,10 @@ abstract public class Test1Verbs
 
     static public class Maybe extends Verb
     {
-        static public final String VerbName = "maybe";
-
         public Maybe()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
+            super("maybe", ArgType.STRING);
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -148,11 +143,10 @@ abstract public class Test1Verbs
 
     static public class Anything extends Verb
     {
-        static public final String VerbName = "anything";
-
         public Anything()
+	    throws VEException
         {
-            super(VerbName);
+            super("anything");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -164,11 +158,10 @@ abstract public class Test1Verbs
 
     static public class Anythingbut extends Verb
     {
-        static public final String VerbName = "anythingbut";
-
         public Anythingbut()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
+            super("anythingbut", ArgType.STRING);
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -180,11 +173,10 @@ abstract public class Test1Verbs
 
     static public class Anythingbutnot extends Verb
     {
-        static public final String VerbName = "anythingbutnot";
-
         public Anythingbutnot()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
+            super("anythingbutnot", ArgType.STRING);
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -196,11 +188,10 @@ abstract public class Test1Verbs
 
     static public class Something extends Verb
     {
-        static public final String VerbName = "something";
-
         public Something()
+	    throws VEException
         {
-            super(VerbName);
+            super("something");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -212,11 +203,10 @@ abstract public class Test1Verbs
 
     static public class Somethingbut extends Verb
     {
-        static public final String VerbName = "somethingbut";
-
         public Somethingbut()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
+            super("somethingbut", ArgType.STRING);
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -228,11 +218,10 @@ abstract public class Test1Verbs
 
     static public class Linebreak extends Verb
     {
-        static public final String VerbName = "linebreak";
-
         public Linebreak()
+	    throws VEException
         {
-            super(VerbName);
+            super("linebreak");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -244,11 +233,10 @@ abstract public class Test1Verbs
 
     static public class BR extends Verb
     {
-        static public final String VerbName = "br";
-
         public BR()
+	    throws VEException
         {
-            super(VerbName); // same as linebreak
+            super("br"); // same as linebreak
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -260,11 +248,10 @@ abstract public class Test1Verbs
 
     static public class Tab extends Verb
     {
-        static public final String VerbName = "tab";
-
         public Tab()
+	    throws VEException
         {
-            super(VerbName);
+            super("tab");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -276,11 +263,10 @@ abstract public class Test1Verbs
 
     static public class Word extends Verb
     {
-        static public final String VerbName = "word";
-
         public Word()
+	    throws VEException
         {
-            super(VerbName);
+            super("word");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -292,11 +278,10 @@ abstract public class Test1Verbs
 
     static public class Anyof extends Verb
     {
-        static public final String VerbName = "anyof";
-
         public Anyof()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
+            super("anyof", ArgType.STRING);
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -308,11 +293,10 @@ abstract public class Test1Verbs
 
     static public class Any extends Verb
     {
-        static public final String VerbName = "any";
-
         public Any()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING); //same as anyof
+            super("any", ArgType.STRING); //same as anyof
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -324,11 +308,10 @@ abstract public class Test1Verbs
 
     static public class Or extends Verb
     {
-        static public final String VerbName = "or";
-
         public Or()
+	    throws VEException
         {
-            super(VerbName);
+            super("or");
         }
 
 
@@ -341,11 +324,10 @@ abstract public class Test1Verbs
 
     static public class Begincapture extends Verb
     {
-        static public final String VerbName = "begincapture";
-
         public Begincapture()
+	    throws VEException
         {
-            super(VerbName);
+            super("begincapture");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -357,11 +339,10 @@ abstract public class Test1Verbs
 
     static public class Endcapture extends Verb
     {
-        static public final String VerbName = "endcapture";
-
         public Endcapture()
+	    throws VEException
         {
-            super(VerbName);
+            super("endcapture");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -373,11 +354,10 @@ abstract public class Test1Verbs
 
     static public class Begin extends Verb
     {
-        static public final String VerbName = "begin";
-
         public Begin()
+	    throws VEException
         {
-            super(VerbName);
+            super("begin");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -389,11 +369,10 @@ abstract public class Test1Verbs
 
     static public class End extends Verb
     {
-        static public final String VerbName = "end";
-
         public End()
+	    throws VEException
         {
-            super(VerbName);
+            super("end");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -408,11 +387,10 @@ abstract public class Test1Verbs
 
     static public class Either extends Verb
     {
-        static public final String VerbName = "either";
-
         public Either()
+	    throws VEException
         {
-            super(VerbName);
+            super("either");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException
@@ -424,12 +402,10 @@ abstract public class Test1Verbs
 
     static public class Stop extends Verb
     {
-        static public final String VerbName = "stop";
-        static public final Signature signature = new Signature();
-
         public Stop()
+	    throws VEException
         {
-            super(VerbName);
+            super("stop");
         }
 
         public void evaluate(ArgList args, Object state) throws VEException

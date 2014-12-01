@@ -16,6 +16,156 @@ abstract public class Test1Verbs
     static final String LPAREN = "(";
     static final String RPAREN = ")";
 
+    static enum VerbTag {
+	Startofline,
+	Endofline,
+	Find,
+	Then,
+	Maybe,
+	Anything,
+	Anythingbut,
+	Anythingbutnot,
+	Something,
+	Somethingbut,
+	Linebreak,
+	Br,
+	Tab,
+	Word,
+	Anyof,
+	Any,
+	Or,
+	Begincapture,
+	Endcapture,
+	Begin,
+	End,
+	Either,
+	Stop;
+
+        static public VerbTag
+	tagFor(String s)
+	    throws VEException
+	{
+	    for(VerbTag vt: values())
+		if(s.equalsIgnoreCase(vt.toString()))
+		    return vt;
+	    throw new VEException("VerbTag: so such verb: "+s);
+	}
+
+    };
+
+    static class VerbCommon extends Verb
+    {
+	protected VerbTag tag;
+
+    public VerbCommon(String name, ArgType... argtypes)
+        throws VEException
+	{
+	    super(name,argtypes);
+	    tag = VerbTag.tagFor(name);
+	}
+	
+        public void evaluate(ArgList args, Object state)
+	    throws VEException
+	{
+	    Test1State t1state = (Test1State)state;
+	    t1state.evaluate(this.tag, args, state);
+	}
+    }
+
+    static public class Test1State
+    {
+	StringBuilder buf = new StringBuilder();
+	public Test1State() {}
+	public String toString() {return buf.toString();}
+        public void evaluate(VerbTag tag, ArgList args, Object state)
+	    throws VEException
+	{
+	    switch (tag) {
+	    case Startofline:
+	            buf.append("^");
+		break;
+	    case Endofline:
+	            buf.append("$");
+		break;	
+	    case Find:
+	            buf.append(".*" + args.getString(0));
+		break;
+	    case Then:
+	            buf.append(args.getString(0));
+		break;
+	    case Maybe:
+	            String arg = args.getString(0);
+	            switch (arg.length()) {
+	            case 0:
+	                throw new VEException("Maybe: zero length argument");
+	            case 1:
+	                buf.append(arg + "?");
+	                break;
+	            default:
+	                buf.append(String.format("(%s)?", arg));
+	                break;
+		    }
+		break;
+	    case Anything:
+	            buf.append(".*");
+		break;
+	    case Anythingbut:
+	            buf.append(String.format("[^%s]*", args.getString(0)));
+		break;
+	    case Anythingbutnot:
+	            buf.append(String.format("[^%s]*", args.getString(0)));
+		break;
+	    case Something:
+	            buf.append(".+");
+		break;
+	    case Somethingbut:
+	            buf.append(String.format("[^%s]+", args.getString(0)));
+		break;
+	    case Linebreak:
+	            buf.append("[\r]?[\n]");
+		break;
+	    case Br:
+	            buf.append("[\r]?[\n]");
+		break;
+	    case Tab:
+	            buf.append("[\t]");
+		break;
+	    case Word:
+	            buf.append("\\w+");
+		break;
+	    case Anyof:
+	            buf.append(String.format("[%s]", args.getString(0)));
+		break;
+	    case Any:
+	            buf.append(String.format("[%s]", args.getString(0)));
+		break;
+	    case Or:
+	            buf.append("|");
+		break;
+	    case Begincapture:
+	            buf.append(LPAREN);
+		break;
+	    case Endcapture:
+	            buf.append(RPAREN);
+		break;
+	    case Begin:
+	            buf.append(LPAREN);
+		break;
+	    case End:
+	            buf.append(RPAREN);
+		break;
+	    case Either:
+	            buf.append("");
+		break;
+	    case Stop:
+		break;
+	    }
+	}
+    }
+
+    //////////////////////////////////////////////////
+
+
     static protected List<VerbDef> verbs;
 
     static public final List<VerbDef> getVerbs()
@@ -24,418 +174,245 @@ abstract public class Test1Verbs
     }
 
     static {
-        verbs = new ArrayList<VerbDef>();
-        verbs.add(new VerbDef(Startofline.VerbName, Startofline.class));
-        verbs.add(new VerbDef(Endofline.VerbName, Endofline.class));
-        verbs.add(new VerbDef(Find.VerbName, Find.class));
-        verbs.add(new VerbDef(Then.VerbName, Then.class));
-        verbs.add(new VerbDef(Maybe.VerbName, Maybe.class));
-        verbs.add(new VerbDef(Anything.VerbName, Anything.class));
-        verbs.add(new VerbDef(Anythingbut.VerbName, Anythingbut.class));
-        verbs.add(new VerbDef(Anythingbutnot.VerbName, Anythingbutnot.class));
-        verbs.add(new VerbDef(Something.VerbName, Something.class));
-        verbs.add(new VerbDef(Somethingbut.VerbName, Somethingbut.class));
-        verbs.add(new VerbDef(Linebreak.VerbName, Linebreak.class));
-        verbs.add(new VerbDef(BR.VerbName, BR.class));
-        verbs.add(new VerbDef(Tab.VerbName, Tab.class));
-        verbs.add(new VerbDef(Word.VerbName, Word.class));
-        verbs.add(new VerbDef(Anyof.VerbName, Anyof.class));
-        verbs.add(new VerbDef(Any.VerbName, Any.class));
-        verbs.add(new VerbDef(Or.VerbName, Or.class));
-        verbs.add(new VerbDef(Begincapture.VerbName, Begincapture.class));
-        verbs.add(new VerbDef(Endcapture.VerbName, Endcapture.class));
-        verbs.add(new VerbDef(Begin.VerbName, Begin.class));
-        verbs.add(new VerbDef(End.VerbName, End.class));
-        verbs.add(new VerbDef(Either.VerbName, Either.class));
-        verbs.add(new VerbDef(Stop.VerbName, Stop.class));
+            verbs = new ArrayList<VerbDef>();
+            verbs.add(new VerbDef("startofline", Startofline.class));
+            verbs.add(new VerbDef("endofline", Endofline.class));
+            verbs.add(new VerbDef("find", Find.class));
+            verbs.add(new VerbDef("then", Then.class));
+            verbs.add(new VerbDef("maybe", Maybe.class));
+            verbs.add(new VerbDef("anything", Anything.class));
+            verbs.add(new VerbDef("anythingbut", Anythingbut.class));
+            verbs.add(new VerbDef("anythingbutnot", Anythingbutnot.class));
+            verbs.add(new VerbDef("something", Something.class));
+            verbs.add(new VerbDef("somethingbut", Somethingbut.class));
+            verbs.add(new VerbDef("linebreak", Linebreak.class));
+            verbs.add(new VerbDef("br", BR.class));
+            verbs.add(new VerbDef("tab", Tab.class));
+            verbs.add(new VerbDef("word", Word.class));
+            verbs.add(new VerbDef("anyof", Anyof.class));
+            verbs.add(new VerbDef("any", Any.class));
+            verbs.add(new VerbDef("or", Or.class));
+            verbs.add(new VerbDef("begincapture", Begincapture.class));
+            verbs.add(new VerbDef("endcapture", Endcapture.class));
+            verbs.add(new VerbDef("begin", Begin.class));
+            verbs.add(new VerbDef("end", End.class));
+            verbs.add(new VerbDef("either", Either.class));
+            verbs.add(new VerbDef("stop", Stop.class));
     }
 
     //////////////////////////////////////////////////
     // Initial set of Verbs; 
     // The verb names are intended to be case insensitive.
-    // These are all static, buf if the Verbs class state
+    // These are all static, but if the Verbs class state
     // is needed then they can be defined as non-static.
 
-    static public class Startofline extends Verb
+    static public class Startofline extends VerbCommon
     {
-        static public final String VerbName = "startofline";
-
         public Startofline()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("^");
+            super("startofline");
         }
     }
 
-    static public class Endofline extends Verb
+    static public class Endofline extends VerbCommon
     {
-        static public final String VerbName = "endofline";
-
         public Endofline()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("$");
+            super("endofline");
         }
     }
 
-    static public class Find extends Verb
+    static public class Find extends VerbCommon
     {
-        static public final String VerbName = "find";
-
         public Find()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(".*" + args.getString(0));
+            super("find", ArgType.STRING);
         }
     }
 
-    static public class Then extends Verb
+    static public class Then extends VerbCommon
     {
-        static public final String VerbName = "then";
-
         public Then()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(args.getString(0));
+            super("then", ArgType.STRING);
         }
     }
 
-    static public class Maybe extends Verb
+    static public class Maybe extends VerbCommon
     {
-        static public final String VerbName = "maybe";
-
         public Maybe()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            String arg = args.getString(0);
-            switch (arg.length()) {
-            case 0:
-                throw new VEException("Maybe: zero length argument");
-            case 1:
-                buf.append(arg + "?");
-                break;
-            default:
-                buf.append(String.format("(%s)?", arg));
-                break;
-            }
+            super("maybe", ArgType.STRING);
         }
     }
 
-    static public class Anything extends Verb
+    static public class Anything extends VerbCommon
     {
-        static public final String VerbName = "anything";
-
         public Anything()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(".*");
+            super("anything");
         }
     }
 
-    static public class Anythingbut extends Verb
+    static public class Anythingbut extends VerbCommon
     {
-        static public final String VerbName = "anythingbut";
-
         public Anythingbut()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(String.format("[^%s]*", args.getString(0)));
+            super("anythingbut", ArgType.STRING);
         }
     }
 
-    static public class Anythingbutnot extends Verb
+    static public class Anythingbutnot extends VerbCommon
     {
-        static public final String VerbName = "anythingbutnot";
-
         public Anythingbutnot()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(String.format("[^%s]*", args.getString(0)));
+            super("anythingbutnot", ArgType.STRING);
         }
     }
 
-    static public class Something extends Verb
+    static public class Something extends VerbCommon
     {
-        static public final String VerbName = "something";
-
         public Something()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(".+");
+            super("something");
         }
     }
 
-    static public class Somethingbut extends Verb
+    static public class Somethingbut extends VerbCommon
     {
-        static public final String VerbName = "somethingbut";
-
         public Somethingbut()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(String.format("[^%s]+", args.getString(0)));
+            super("somethingbut", ArgType.STRING);
         }
     }
 
-    static public class Linebreak extends Verb
+    static public class Linebreak extends VerbCommon
     {
-        static public final String VerbName = "linebreak";
-
         public Linebreak()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("[\r]?[\n]");
+            super("linebreak");
         }
     }
 
-    static public class BR extends Verb
+    static public class BR extends VerbCommon
     {
-        static public final String VerbName = "br";
-
         public BR()
+	    throws VEException
         {
-            super(VerbName); // same as linebreak
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("[\r]?[\n]");
+            super("br"); // same as linebreak
         }
     }
 
-    static public class Tab extends Verb
+    static public class Tab extends VerbCommon
     {
-        static public final String VerbName = "tab";
-
         public Tab()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("[\t]");
+            super("tab");
         }
     }
 
-    static public class Word extends Verb
+    static public class Word extends VerbCommon
     {
-        static public final String VerbName = "word";
-
         public Word()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("\\w+");
+            super("word");
         }
     }
 
-    static public class Anyof extends Verb
+    static public class Anyof extends VerbCommon
     {
-        static public final String VerbName = "anyof";
-
         public Anyof()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(String.format("[%s]", args.getString(0)));
+            super("anyof", ArgType.STRING);
         }
     }
 
-    static public class Any extends Verb
+    static public class Any extends VerbCommon
     {
-        static public final String VerbName = "any";
-
         public Any()
+	    throws VEException
         {
-            super(VerbName, ArgType.STRING); //same as anyof
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(String.format("[%s]", args.getString(0)));
+            super("any", ArgType.STRING); //same as anyof
         }
     }
 
-    static public class Or extends Verb
+    static public class Or extends VerbCommon
     {
-        static public final String VerbName = "or";
-
         public Or()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("|");
+            super("or");
         }
     }
 
-    static public class Begincapture extends Verb
+    static public class Begincapture extends VerbCommon
     {
-        static public final String VerbName = "begincapture";
-
         public Begincapture()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(LPAREN);
+            super("begincapture");
         }
     }
 
-    static public class Endcapture extends Verb
+    static public class Endcapture extends VerbCommon
     {
-        static public final String VerbName = "endcapture";
-
         public Endcapture()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(RPAREN);
+            super("endcapture");
         }
     }
 
-    static public class Begin extends Verb
+    static public class Begin extends VerbCommon
     {
-        static public final String VerbName = "begin";
-
         public Begin()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(LPAREN);
+            super("begin");
         }
     }
 
-    static public class End extends Verb
+    static public class End extends VerbCommon
     {
-        static public final String VerbName = "end";
-
         public End()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append(RPAREN);
+            super("end");
         }
     }
 
     //////////////////////////////////////////////////
     // Extended verb set
 
-    static public class Either extends Verb
+    static public class Either extends VerbCommon
     {
-        static public final String VerbName = "either";
-
         public Either()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("");
+            super("either");
         }
     }
 
-    static public class Stop extends Verb
+    static public class Stop extends VerbCommon
     {
-        static public final String VerbName = "stop";
-        static public final Signature signature = new Signature();
-
         public Stop()
+	    throws VEException
         {
-            super(VerbName);
-        }
-
-        public void evaluate(ArgList args, Object state) throws VEException
-        {
-            StringBuilder buf = (StringBuilder) state;
-            buf.append("");
+            super("stop");
         }
     }
 
