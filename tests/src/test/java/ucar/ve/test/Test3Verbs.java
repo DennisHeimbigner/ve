@@ -165,9 +165,7 @@ abstract public class Test3Verbs
                 // generate code for each branch separated by '|'
                 buf.append(LPAREN);
                 args.getBlock(0).evaluate(this,ve);
-                buf.append(RPAREN);
                 buf.append('|');
-                buf.append(LPAREN);
                 args.getBlock(1).evaluate(this,ve);
                 buf.append(RPAREN);
                 break;

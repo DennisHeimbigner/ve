@@ -384,7 +384,7 @@ public class VEParser extends Parser
                 action = new Action(verb);
                 action.setPosition(lexer.getPosition());
                 collectargs(action, yytext, yypos);
-                this.program.add(action);
+                actions.add(action);
                 break;
 
             default:
@@ -428,7 +428,7 @@ public class VEParser extends Parser
                 token = lexer.yylex(yytext, yypos);
                 if(token != RBRACE)
                     errmsg = "Unclosed block";
-		args.add(new Arg(ArgType.BLOCK,block));
+		        args.add(new Arg(ArgType.BLOCK,block));
                 break;
             case RBRACE:
                 errmsg = "Too many " + RBRACE;
