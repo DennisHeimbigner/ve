@@ -31,9 +31,9 @@ public class Test1 extends TestCommon
     test()
         throws Exception
     {
-        Object state = new StringBuilder();
+        Test1Verbs.Test1State state = new Test1Verbs.Test1State();
         evaluate(cfg, state);
-        System.out.printf("Result=!%s!", ((StringBuilder) state).toString());
+        System.out.printf("Result= %s\n", state.toString());
     }
 
     static public void main(String[] argv)

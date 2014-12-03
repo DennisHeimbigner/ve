@@ -42,37 +42,26 @@ public class Types
         public String getString(int index)
             throws VEException
         {
-            return super.get(0).value;
+            return super.get(index).asString();
         }
 
         public String getWord(int index)
             throws VEException
         {
-            Arg arg = super.get(0);
-            boolean ok = VEParser.WORDCHAR1.indexOf(arg.value.charAt(0)) >= 0;
-            if(ok) {
-                for(int i = 1;i < arg.value.length();i++) {
-                    if(VEParser.WORDCHARN.indexOf(arg.value.charAt(i)) < 0) {
-                        ok = false;
-                        break;
-                    }
-                }
-            }
-            if(!ok)
-                throw new VEException(String.format("Cannot convert %s to word", arg.value));
-            return arg.value;
+            return super.get(index).asWord();
+
         }
 
-        public long getNumber(int index)
+        public Number getNumber(int index)
             throws VEException
         {
-            Arg arg = super.get(0);
-            try {
-                long l = Long.parseLong(arg.value);
-                return l;
-            } catch (NumberFormatException nfe) {
-                throw new VEException(String.format("Cannot convert %s to number", arg.value));
-            }
+            return super.get(index).asNumber();
+        }
+
+        public ActionList getBlock(int index)
+            throws VEException
+        {
+            return super.get(index).asBlock();
         }
     }
 
@@ -94,9 +83,9 @@ public class Types
     static public class Arg
     {
         public ArgType type;
-        public String value;
+        public Object value;
 
-        public Arg(ArgType type, String value)
+        public Arg(ArgType type, Object value)
         {
             this.type = type;
             this.value = value;
@@ -120,10 +109,55 @@ public class Types
             StringBuilder b = new StringBuilder();
             b.append(type.name());
             b.append("(");
-            b.append(value);
+            b.append(value.toString());
             b.append(")");
             return b.toString();
         }
+
+        public String asString()
+        {
+            return value.toString();
+        }
+
+        public Number asNumber()
+        {
+            if(value instanceof Number)
+                return (Number) value;
+            try {
+                return Long.valueOf(this.value.toString()); // try this first
+            } catch (NumberFormatException nfe1) {
+                try {
+                    return Double.valueOf(this.value.toString()); // try this second
+                } catch (NumberFormatException nfe2) {
+                    throw new IllegalStateException("Arg cannot be converted to Number");
+                }
+            }
+        }
+
+        public String asWord()
+        {
+            String sv = value.toString();
+            boolean ok = VEParser.WORDCHAR1.indexOf(sv.charAt(0)) >= 0;
+            if(ok) {
+                for(int i = 1;i < sv.length();i++) {
+                    if(VEParser.WORDCHARN.indexOf(sv.charAt(i)) < 0) {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            if(!ok)
+                throw new IllegalStateException("Cannot convert arg to word");
+            return asString();
+        }
+
+        public ActionList asBlock()
+        {
+            if(value instanceof ActionList)
+                return (ActionList) value;
+            throw new IllegalStateException("Arg cannot be converted to Block");
+        }
+
     }
 
     static public class Position

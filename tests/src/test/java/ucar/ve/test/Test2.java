@@ -23,26 +23,26 @@ public class Test2 extends TestCommon
     {
         super(argv);
         int exitcode = 0;
-        Configuration cfg = getOptions(argv);
-        cfg.verbs = Test2Verbs.getVerbs();
+        this.cfg = getOptions(argv);
+        this.cfg.verbs = Test2Verbs.getVerbs();
     }
 
     public void
     test()
         throws Exception
     {
-        Object state = new StringBuilder();
+        Test2Verbs.Test2State state = new Test2Verbs.Test2State();
         evaluate(cfg, state);
-        System.out.printf("Result=!%s!", ((StringBuilder) state).toString());
+        System.out.printf("Result= %s\n", state.toString());
     }
 
     static public void main(String[] argv)
     {
-	int exitcode = 0;
-	try {
-	    new Test2(argv).test();
+        int exitcode = 0;
+        try {
+            new Test2(argv).test();
         } catch (Exception e) {
-	    report(e);
+            report(e);
             exitcode = 1;
         }
         System.exit(exitcode);

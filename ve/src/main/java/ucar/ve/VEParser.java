@@ -340,12 +340,11 @@ public class VEParser extends Parser
         throws VEException
     {
         this.lexer = new Lexer(text, this);
-        this.program = new ActionList();
         StringBuilder yytext = new StringBuilder();
         Position yypos = new Position(0, 0);
         ActionList actions = new ActionList();
-        parseR(actions, yytext, yypos);
         this.program = actions;
+        parseR(actions, yytext, yypos);
     }
 
     /**
@@ -429,6 +428,7 @@ public class VEParser extends Parser
                 token = lexer.yylex(yytext, yypos);
                 if(token != RBRACE)
                     errmsg = "Unclosed block";
+		args.add(new Arg(ArgType.BLOCK,block));
                 break;
             case RBRACE:
                 errmsg = "Too many " + RBRACE;

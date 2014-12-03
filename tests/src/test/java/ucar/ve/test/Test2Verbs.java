@@ -51,6 +51,24 @@ abstract public class Test2Verbs
     }
 
     //////////////////////////////////////////////////
+
+    static public class Test2State
+    {
+        StringBuilder buf = new StringBuilder();
+
+        public Test2State()
+        {
+        }
+
+        public String toString()
+        {
+            return buf.toString();
+        }
+
+	public StringBuilder getBuf() {return this.buf;}
+    }
+
+    //////////////////////////////////////////////////
     // Initial set of Verbs; 
     // The verb names are intended to be case insensitive.
     // These are all static, buf if the Verbs class state
@@ -66,7 +84,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("^");
         }
     }
@@ -81,7 +99,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("$");
         }
     }
@@ -96,7 +114,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(".*" + args.getString(0));
         }
     }
@@ -111,7 +129,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(args.getString(0));
         }
     }
@@ -126,7 +144,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             String arg = args.getString(0);
             switch (arg.length()) {
             case 0:
@@ -151,7 +169,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(".*");
         }
     }
@@ -166,7 +184,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(String.format("[^%s]*", args.getString(0)));
         }
     }
@@ -181,7 +199,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(String.format("[^%s]*", args.getString(0)));
         }
     }
@@ -196,7 +214,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(".+");
         }
     }
@@ -211,7 +229,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(String.format("[^%s]+", args.getString(0)));
         }
     }
@@ -226,7 +244,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("[\r]?[\n]");
         }
     }
@@ -241,7 +259,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("[\r]?[\n]");
         }
     }
@@ -256,7 +274,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("[\t]");
         }
     }
@@ -271,7 +289,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("\\w+");
         }
     }
@@ -286,7 +304,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(String.format("[%s]", args.getString(0)));
         }
     }
@@ -301,7 +319,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(String.format("[%s]", args.getString(0)));
         }
     }
@@ -317,7 +335,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("|");
         }
     }
@@ -332,7 +350,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(LPAREN);
         }
     }
@@ -347,7 +365,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(RPAREN);
         }
     }
@@ -362,7 +380,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(LPAREN);
         }
     }
@@ -377,7 +395,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append(RPAREN);
         }
     }
@@ -395,7 +413,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("");
         }
     }
@@ -410,7 +428,7 @@ abstract public class Test2Verbs
 
         public void evaluate(ArgList args, Object state) throws VEException
         {
-            StringBuilder buf = (StringBuilder) state;
+            StringBuilder buf = ((Test2State)state).getBuf();
             buf.append("");
         }
     }

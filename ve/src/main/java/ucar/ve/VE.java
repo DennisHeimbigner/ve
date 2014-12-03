@@ -41,6 +41,7 @@ public class VE
         this();
         reset(configuration);
         loadVerbs();
+        parse();
     }
 
     public void
@@ -50,7 +51,6 @@ public class VE
         this.config = new Configuration(configuration);
         // Validate and initialize the configuration
         validate(config);
-        parse();
     }
 
     protected void

@@ -16,155 +16,163 @@ abstract public class Test1Verbs
     static final String LPAREN = "(";
     static final String RPAREN = ")";
 
-    static enum VerbTag {
-	Startofline,
-	Endofline,
-	Find,
-	Then,
-	Maybe,
-	Anything,
-	Anythingbut,
-	Anythingbutnot,
-	Something,
-	Somethingbut,
-	Linebreak,
-	Br,
-	Tab,
-	Word,
-	Anyof,
-	Any,
-	Or,
-	Begincapture,
-	Endcapture,
-	Begin,
-	End,
-	Either,
-	Stop;
+    static enum VerbTag
+    {
+        Startofline,
+        Endofline,
+        Find,
+        Then,
+        Maybe,
+        Anything,
+        Anythingbut,
+        Anythingbutnot,
+        Something,
+        Somethingbut,
+        Linebreak,
+        Br,
+        Tab,
+        Word,
+        Anyof,
+        Any,
+        Or,
+        Begincapture,
+        Endcapture,
+        Begin,
+        End,
+        Either,
+        Stop;
 
         static public VerbTag
-	tagFor(String s)
-	    throws VEException
-	{
-	    for(VerbTag vt: values())
-		if(s.equalsIgnoreCase(vt.toString()))
-		    return vt;
-	    throw new VEException("VerbTag: so such verb: "+s);
-	}
+        tagFor(String s)
+            throws VEException
+        {
+            for(VerbTag vt : values())
+                if(s.equalsIgnoreCase(vt.toString()))
+                    return vt;
+            throw new VEException("VerbTag: so such verb: " + s);
+        }
 
-    };
+    }
 
     static class VerbCommon extends Verb
     {
-	protected VerbTag tag;
+        protected VerbTag tag;
 
-    public VerbCommon(String name, ArgType... argtypes)
-        throws VEException
-	{
-	    super(name,argtypes);
-	    tag = VerbTag.tagFor(name);
-	}
-	
+        public VerbCommon(String name, ArgType... argtypes)
+            throws VEException
+        {
+            super(name, argtypes);
+            tag = VerbTag.tagFor(name);
+        }
+
         public void evaluate(ArgList args, Object state)
-	    throws VEException
-	{
-	    Test1State t1state = (Test1State)state;
-	    t1state.evaluate(this.tag, args, state);
-	}
+            throws VEException
+        {
+            Test1State t1state = (Test1State) state;
+            t1state.evaluate(this.tag, args, state);
+        }
     }
 
     static public class Test1State
     {
-	StringBuilder buf = new StringBuilder();
-	public Test1State() {}
-	public String toString() {return buf.toString();}
+        StringBuilder buf = new StringBuilder();
+
+        public Test1State()
+        {
+        }
+
+        public String toString()
+        {
+            return buf.toString();
+        }
+
         public void evaluate(VerbTag tag, ArgList args, Object state)
-	    throws VEException
-	{
-	    switch (tag) {
-	    case Startofline:
-	            buf.append("^");
-		break;
-	    case Endofline:
-	            buf.append("$");
-		break;	
-	    case Find:
-	            buf.append(".*" + args.getString(0));
-		break;
-	    case Then:
-	            buf.append(args.getString(0));
-		break;
-	    case Maybe:
-	            String arg = args.getString(0);
-	            switch (arg.length()) {
-	            case 0:
-	                throw new VEException("Maybe: zero length argument");
-	            case 1:
-	                buf.append(arg + "?");
-	                break;
-	            default:
-	                buf.append(String.format("(%s)?", arg));
-	                break;
-		    }
-		break;
-	    case Anything:
-	            buf.append(".*");
-		break;
-	    case Anythingbut:
-	            buf.append(String.format("[^%s]*", args.getString(0)));
-		break;
-	    case Anythingbutnot:
-	            buf.append(String.format("[^%s]*", args.getString(0)));
-		break;
-	    case Something:
-	            buf.append(".+");
-		break;
-	    case Somethingbut:
-	            buf.append(String.format("[^%s]+", args.getString(0)));
-		break;
-	    case Linebreak:
-	            buf.append("[\r]?[\n]");
-		break;
-	    case Br:
-	            buf.append("[\r]?[\n]");
-		break;
-	    case Tab:
-	            buf.append("[\t]");
-		break;
-	    case Word:
-	            buf.append("\\w+");
-		break;
-	    case Anyof:
-	            buf.append(String.format("[%s]", args.getString(0)));
-		break;
-	    case Any:
-	            buf.append(String.format("[%s]", args.getString(0)));
-		break;
-	    case Or:
-	            buf.append("|");
-		break;
-	    case Begincapture:
-	            buf.append(LPAREN);
-		break;
-	    case Endcapture:
-	            buf.append(RPAREN);
-		break;
-	    case Begin:
-	            buf.append(LPAREN);
-		break;
-	    case End:
-	            buf.append(RPAREN);
-		break;
-	    case Either:
-	            buf.append("");
-		break;
-	    case Stop:
-		break;
-	    }
-	}
+            throws VEException
+        {
+            switch (tag) {
+            case Startofline:
+                buf.append("^");
+                break;
+            case Endofline:
+                buf.append("$");
+                break;
+            case Find:
+                buf.append(".*" + args.getString(0));
+                break;
+            case Then:
+                buf.append(args.getString(0));
+                break;
+            case Maybe:
+                String arg = args.getString(0);
+                switch (arg.length()) {
+                case 0:
+                    throw new VEException("Maybe: zero length argument");
+                case 1:
+                    buf.append(arg + "?");
+                    break;
+                default:
+                    buf.append(String.format("(%s)?", arg));
+                    break;
+                }
+                break;
+            case Anything:
+                buf.append(".*");
+                break;
+            case Anythingbut:
+                buf.append(String.format("[^%s]*", args.getString(0)));
+                break;
+            case Anythingbutnot:
+                buf.append(String.format("[^%s]*", args.getString(0)));
+                break;
+            case Something:
+                buf.append(".+");
+                break;
+            case Somethingbut:
+                buf.append(String.format("[^%s]+", args.getString(0)));
+                break;
+            case Linebreak:
+                buf.append("[\r]?[\n]");
+                break;
+            case Br:
+                buf.append("[\r]?[\n]");
+                break;
+            case Tab:
+                buf.append("[\t]");
+                break;
+            case Word:
+                buf.append("\\w+");
+                break;
+            case Anyof:
+                buf.append(String.format("[%s]", args.getString(0)));
+                break;
+            case Any:
+                buf.append(String.format("[%s]", args.getString(0)));
+                break;
+            case Or:
+                buf.append("|");
+                break;
+            case Begincapture:
+                buf.append(LPAREN);
+                break;
+            case Endcapture:
+                buf.append(RPAREN);
+                break;
+            case Begin:
+                buf.append(LPAREN);
+                break;
+            case End:
+                buf.append(RPAREN);
+                break;
+            case Either:
+                buf.append("");
+                break;
+            case Stop:
+                break;
+            }
+        }
     }
 
     //////////////////////////////////////////////////
-
 
     static protected List<VerbDef> verbs;
 
@@ -174,30 +182,30 @@ abstract public class Test1Verbs
     }
 
     static {
-            verbs = new ArrayList<VerbDef>();
-            verbs.add(new VerbDef("startofline", Startofline.class));
-            verbs.add(new VerbDef("endofline", Endofline.class));
-            verbs.add(new VerbDef("find", Find.class));
-            verbs.add(new VerbDef("then", Then.class));
-            verbs.add(new VerbDef("maybe", Maybe.class));
-            verbs.add(new VerbDef("anything", Anything.class));
-            verbs.add(new VerbDef("anythingbut", Anythingbut.class));
-            verbs.add(new VerbDef("anythingbutnot", Anythingbutnot.class));
-            verbs.add(new VerbDef("something", Something.class));
-            verbs.add(new VerbDef("somethingbut", Somethingbut.class));
-            verbs.add(new VerbDef("linebreak", Linebreak.class));
-            verbs.add(new VerbDef("br", BR.class));
-            verbs.add(new VerbDef("tab", Tab.class));
-            verbs.add(new VerbDef("word", Word.class));
-            verbs.add(new VerbDef("anyof", Anyof.class));
-            verbs.add(new VerbDef("any", Any.class));
-            verbs.add(new VerbDef("or", Or.class));
-            verbs.add(new VerbDef("begincapture", Begincapture.class));
-            verbs.add(new VerbDef("endcapture", Endcapture.class));
-            verbs.add(new VerbDef("begin", Begin.class));
-            verbs.add(new VerbDef("end", End.class));
-            verbs.add(new VerbDef("either", Either.class));
-            verbs.add(new VerbDef("stop", Stop.class));
+        verbs = new ArrayList<VerbDef>();
+        verbs.add(new VerbDef("startofline", Startofline.class));
+        verbs.add(new VerbDef("endofline", Endofline.class));
+        verbs.add(new VerbDef("find", Find.class));
+        verbs.add(new VerbDef("then", Then.class));
+        verbs.add(new VerbDef("maybe", Maybe.class));
+        verbs.add(new VerbDef("anything", Anything.class));
+        verbs.add(new VerbDef("anythingbut", Anythingbut.class));
+        verbs.add(new VerbDef("anythingbutnot", Anythingbutnot.class));
+        verbs.add(new VerbDef("something", Something.class));
+        verbs.add(new VerbDef("somethingbut", Somethingbut.class));
+        verbs.add(new VerbDef("linebreak", Linebreak.class));
+        verbs.add(new VerbDef("br", BR.class));
+        verbs.add(new VerbDef("tab", Tab.class));
+        verbs.add(new VerbDef("word", Word.class));
+        verbs.add(new VerbDef("anyof", Anyof.class));
+        verbs.add(new VerbDef("any", Any.class));
+        verbs.add(new VerbDef("or", Or.class));
+        verbs.add(new VerbDef("begincapture", Begincapture.class));
+        verbs.add(new VerbDef("endcapture", Endcapture.class));
+        verbs.add(new VerbDef("begin", Begin.class));
+        verbs.add(new VerbDef("end", End.class));
+        verbs.add(new VerbDef("either", Either.class));
+        verbs.add(new VerbDef("stop", Stop.class));
     }
 
     //////////////////////////////////////////////////
@@ -209,7 +217,7 @@ abstract public class Test1Verbs
     static public class Startofline extends VerbCommon
     {
         public Startofline()
-	    throws VEException
+            throws VEException
         {
             super("startofline");
         }
@@ -218,7 +226,7 @@ abstract public class Test1Verbs
     static public class Endofline extends VerbCommon
     {
         public Endofline()
-	    throws VEException
+            throws VEException
         {
             super("endofline");
         }
@@ -227,7 +235,7 @@ abstract public class Test1Verbs
     static public class Find extends VerbCommon
     {
         public Find()
-	    throws VEException
+            throws VEException
         {
             super("find", ArgType.STRING);
         }
@@ -236,7 +244,7 @@ abstract public class Test1Verbs
     static public class Then extends VerbCommon
     {
         public Then()
-	    throws VEException
+            throws VEException
         {
             super("then", ArgType.STRING);
         }
@@ -245,7 +253,7 @@ abstract public class Test1Verbs
     static public class Maybe extends VerbCommon
     {
         public Maybe()
-	    throws VEException
+            throws VEException
         {
             super("maybe", ArgType.STRING);
         }
@@ -254,7 +262,7 @@ abstract public class Test1Verbs
     static public class Anything extends VerbCommon
     {
         public Anything()
-	    throws VEException
+            throws VEException
         {
             super("anything");
         }
@@ -263,7 +271,7 @@ abstract public class Test1Verbs
     static public class Anythingbut extends VerbCommon
     {
         public Anythingbut()
-	    throws VEException
+            throws VEException
         {
             super("anythingbut", ArgType.STRING);
         }
@@ -272,7 +280,7 @@ abstract public class Test1Verbs
     static public class Anythingbutnot extends VerbCommon
     {
         public Anythingbutnot()
-	    throws VEException
+            throws VEException
         {
             super("anythingbutnot", ArgType.STRING);
         }
@@ -281,7 +289,7 @@ abstract public class Test1Verbs
     static public class Something extends VerbCommon
     {
         public Something()
-	    throws VEException
+            throws VEException
         {
             super("something");
         }
@@ -290,7 +298,7 @@ abstract public class Test1Verbs
     static public class Somethingbut extends VerbCommon
     {
         public Somethingbut()
-	    throws VEException
+            throws VEException
         {
             super("somethingbut", ArgType.STRING);
         }
@@ -299,7 +307,7 @@ abstract public class Test1Verbs
     static public class Linebreak extends VerbCommon
     {
         public Linebreak()
-	    throws VEException
+            throws VEException
         {
             super("linebreak");
         }
@@ -308,7 +316,7 @@ abstract public class Test1Verbs
     static public class BR extends VerbCommon
     {
         public BR()
-	    throws VEException
+            throws VEException
         {
             super("br"); // same as linebreak
         }
@@ -317,7 +325,7 @@ abstract public class Test1Verbs
     static public class Tab extends VerbCommon
     {
         public Tab()
-	    throws VEException
+            throws VEException
         {
             super("tab");
         }
@@ -326,7 +334,7 @@ abstract public class Test1Verbs
     static public class Word extends VerbCommon
     {
         public Word()
-	    throws VEException
+            throws VEException
         {
             super("word");
         }
@@ -335,7 +343,7 @@ abstract public class Test1Verbs
     static public class Anyof extends VerbCommon
     {
         public Anyof()
-	    throws VEException
+            throws VEException
         {
             super("anyof", ArgType.STRING);
         }
@@ -344,7 +352,7 @@ abstract public class Test1Verbs
     static public class Any extends VerbCommon
     {
         public Any()
-	    throws VEException
+            throws VEException
         {
             super("any", ArgType.STRING); //same as anyof
         }
@@ -353,7 +361,7 @@ abstract public class Test1Verbs
     static public class Or extends VerbCommon
     {
         public Or()
-	    throws VEException
+            throws VEException
         {
             super("or");
         }
@@ -362,7 +370,7 @@ abstract public class Test1Verbs
     static public class Begincapture extends VerbCommon
     {
         public Begincapture()
-	    throws VEException
+            throws VEException
         {
             super("begincapture");
         }
@@ -371,7 +379,7 @@ abstract public class Test1Verbs
     static public class Endcapture extends VerbCommon
     {
         public Endcapture()
-	    throws VEException
+            throws VEException
         {
             super("endcapture");
         }
@@ -380,7 +388,7 @@ abstract public class Test1Verbs
     static public class Begin extends VerbCommon
     {
         public Begin()
-	    throws VEException
+            throws VEException
         {
             super("begin");
         }
@@ -389,7 +397,7 @@ abstract public class Test1Verbs
     static public class End extends VerbCommon
     {
         public End()
-	    throws VEException
+            throws VEException
         {
             super("end");
         }
@@ -401,7 +409,7 @@ abstract public class Test1Verbs
     static public class Either extends VerbCommon
     {
         public Either()
-	    throws VEException
+            throws VEException
         {
             super("either");
         }
@@ -410,7 +418,7 @@ abstract public class Test1Verbs
     static public class Stop extends VerbCommon
     {
         public Stop()
-	    throws VEException
+            throws VEException
         {
             super("stop");
         }
