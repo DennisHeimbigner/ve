@@ -15,19 +15,41 @@ public class Action
     public ArgList args = null;
     Position pos = null;
 
-    public Action(Verb verb) {this.verb = verb;}
-    public void setArgs(ArgList args) {this.args=args;}
-    public int arity() {return verb.getSignature().size();}
-    public List<ArgType> getSignature() {return verb.getSignature();}
+    public Action(Verb verb)
+    {
+        this.verb = verb;
+    }
 
-    public void setPosition(Position pos) {this.pos = new Position(pos);}
-    public Position getPosition() {return this.pos;}
+    public void setArgs(ArgList args)
+    {
+        this.args = args;
+    }
+
+    public int arity()
+    {
+        return verb.getSignature().size();
+    }
+
+    public List<ArgType> getSignature()
+    {
+        return verb.getSignature();
+    }
+
+    public void setPosition(Position pos)
+    {
+        this.pos = new Position(pos);
+    }
+
+    public Position getPosition()
+    {
+        return this.pos;
+    }
 
     public void
     execute(Object state)
-	throws VEException
+        throws VEException
     {
-	verb.evaluate(args,state);
+        verb.evaluate(args, state);
     }
 
     public String
@@ -37,10 +59,10 @@ public class Action
         buf.append(verb.getName());
         buf.append("(");
         if(args != null)
-        for(int i=0;i<args.size();i++) {
-            if(i > 0) buf.append(",");
-            buf.append(args.get(i).toString());
-        }
+            for(int i = 0;i < args.size();i++) {
+                if(i > 0) buf.append(",");
+                buf.append(args.get(i).toString());
+            }
         buf.append(")");
         return buf.toString();
     }

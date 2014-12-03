@@ -29,6 +29,29 @@ public class Types
             if(x != null) super.add(x);
             return this;
         }
+
+        public void evaluate(Object state, VE ve)
+            throws VEException
+        {
+            for(int i = 0;i < super.size();i++) {
+                Action action = super.get(i);
+                action.execute(state);
+            }
+        }
+
+        public String
+        toString()
+        {
+            StringBuilder buf = new StringBuilder();
+            buf.append('{');
+            for(int i=0;i<super.size();i++) {
+                if(i > 0) buf.append(';');
+                buf.append(super.get(i).toString());
+            }
+            buf.append('}');
+            return buf.toString();
+        }
+
     }
 
     static public class ArgList extends ArrayList<Arg>

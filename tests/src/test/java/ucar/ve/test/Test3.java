@@ -14,17 +14,17 @@ import java.io.*;
 import static ucar.ve.Types.*;
 import static ucar.ve.VE.*;
 
-public class Test1 extends TestCommon
+public class Test3 extends TestCommon
 {
     Configuration cfg = null;
 
-    public Test1(String[] argv)
+    public Test3(String[] argv)
         throws Exception
     {
         super(argv);
         int exitcode = 0;
         this.cfg = getOptions(argv);
-        this.cfg.verbs = Test1Verbs.getVerbs();
+        this.cfg.verbs = Test3Verbs.getVerbs();
     }
 
     public void
@@ -32,7 +32,7 @@ public class Test1 extends TestCommon
         throws Exception
     {
         VE ve = new VE(cfg);
-        Test1Verbs.Test1State state = new Test1Verbs.Test1State();
+        Test3Verbs.Test3State state = new Test3Verbs.Test3State(ve);
         ve.evaluate(state);
         System.out.printf("Result= %s\n", state.toString());
     }
@@ -41,7 +41,7 @@ public class Test1 extends TestCommon
     {
         int exitcode = 0;
         try {
-            new Test1(argv).test();
+            new Test3(argv).test();
         } catch (Exception e) {
             report(e);
             exitcode = 1;

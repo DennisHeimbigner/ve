@@ -1,0 +1,11 @@
+.startOfLine
+.oneof {
+    .then "http"
+    .maybe "s"
+} {
+    .then "file"
+}
+.then "://"
+.maybe "www."
+.anythingButNot " "
+.endOfLine

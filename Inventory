@@ -25,3 +25,6 @@ tests/src/test/java/ucar/ve/test/Test1.java
 tests/src/test/java/ucar/ve/test/Test1Verbs.java
 tests/src/test/java/ucar/ve/test/Test2.java
 tests/src/test/java/ucar/ve/test/Test2Verbs.java
+tests/src/test/data/rwu.ve
+tests/src/test/data/rwu3.ve
+

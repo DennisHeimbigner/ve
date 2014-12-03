@@ -30,7 +30,7 @@ public class VE
 
     //////////////////////////////////////////////////
     // Constructor(s)
-    public VE()
+    protected VE()
         throws VEException
     {
     }

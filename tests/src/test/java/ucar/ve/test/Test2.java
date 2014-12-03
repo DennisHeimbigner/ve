@@ -32,7 +32,8 @@ public class Test2 extends TestCommon
         throws Exception
     {
         Test2Verbs.Test2State state = new Test2Verbs.Test2State();
-        evaluate(cfg, state);
+        VE ve = new VE(cfg);
+        ve.evaluate(state);
         System.out.printf("Result= %s\n", state.toString());
     }
 
