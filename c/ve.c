@@ -61,6 +61,7 @@ ve_init_ve(VE* ve, VEconfiguration* cfg)
     ve->cfg = (VEconfiguration*)calloc(1,sizeof(VEconfiguration));
     if(ve->cfg == NULL) {return VE_ENOMEM;}
     *ve->cfg = *cfg;
+    ve->verbs = ve->cfg->verbs; /* for convenience */
     stat = validate(ve->cfg);
     return stat;
 }
@@ -69,10 +70,8 @@ static VEerror
 validate(VEconfiguration* cfg)
 {
     VEerror stat = VE_NOERR;
-    if(cfg->input == NULL || strlen(cfg->input) == 0)
-	return VE_EINPUT;
-    if(cfg->output == NULL) /* default to stdout */
-        cfg->output = stdout;
+    if(cfg->verbs == NULL)
+	stat = VE_EVERBS;
     if(VE_DEBUG)
         cfg->debug = 1;
     if(VE_PARSEDEBUG)
@@ -82,11 +81,29 @@ validate(VEconfiguration* cfg)
     return stat;
 }
 
+static void
+reset(VE* ve)
+{
+    VEaction** p;
+    if(ve->program != NULL) {
+        for(p=ve->program;*p;p++)
+	    (void)ve_free_action(*p);
+	free(ve->program);
+    }
+    ve->program = NULL;
+}
+
 VEerror
-ve_parse(VE* ve)
+ve_parse(VE* ve, char* input)
 {
     VEerror stat = VE_NOERR;
     VEparser* parser;
+
+    if(input == NULL || strlen(input) == 0)
+	return VE_EINPUT;
+    /* reset */
+    reset(ve);
+    ve->input = input;    
     /* Create the input parser */
     stat = ve_new_parser(ve,&parser);
     if(stat == VE_NOERR) {
@@ -94,7 +111,7 @@ ve_parse(VE* ve)
         if(ve->cfg->parsedebug)
 	    ve_setdebuglevel(parser,1);
 	program = velistnew();
-        stat = ve_parse_internal(parser,ve->cfg->input,program);
+        stat = ve_parse_internal(parser,ve->input,program);
         (void)ve_free_parser(parser);
 	ve->program = (VEaction**)velistdup(program);
 	velistfree(program);

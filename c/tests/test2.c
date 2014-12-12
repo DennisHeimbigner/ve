@@ -22,9 +22,12 @@ main(int argc, char** argv)
 
     getopts(argc,argv,&cfg);
     loadverbs(&cfg);
+
     state = createstate(&cfg);
 
     stat = ve_new_ve(&cfg,&ve);
+    if(stat != VE_NOERR) goto fail;
+    stat = ve_parse(ve,text);
     if(stat != VE_NOERR) goto fail;
     stat = ve_evaluate(ve,state);
     if(stat != VE_NOERR) goto fail;
@@ -125,11 +128,14 @@ makeverb(Verbtag tag, VEevaluator eval, int arity, /*VEargtype*/...)
     va_list ap;
 
     signature = (VEargtype*)malloc(sizeof(VEargtype)*(arity+1));
-    va_start(ap,arity);
-    for(i=0;i<arity;i++) {
-	signature[i] = va_arg(ap,VEargtype);
+    if(arity > 0) {
+        va_start(ap,arity);
+        for(i=0;i<arity;i++) {
+	    signature[i] = va_arg(ap,VEargtype);
+	}
+        va_end(ap);
     }
-    va_end(ap);
+    signature[arity] = VE_UNDEF;
     stat = ve_new_verb(verbnames[(int)tag],signature,&verb);
     if(stat != VE_NOERR) fatal("verb creation failure");
     verb->uid = (int)tag;
@@ -173,30 +179,31 @@ loadverbs(VEconfiguration* cfg)
     VEverb** verbs;
     cfg->verbs = (VEverb**)malloc(sizeof(VEverb*)*(MAX+1));
     verbs = cfg->verbs;
+    int index = 0;
     
-    verbs[(int)Startofline] = makeverb(Startofline,eval_startofline,0);
-    verbs[(int)Endofline] = makeverb(Endofline,eval_endofline,0);
-    verbs[(int)Find] = makeverb(Find,eval_find,0,VE_STRING);
-    verbs[(int)Then] = makeverb(Then,eval_then,0,VE_STRING);
-    verbs[(int)Maybe] = makeverb(Maybe,eval_maybe,0,VE_STRING);
-    verbs[(int)Anything] = makeverb(Anything,eval_anything,0,VE_STRING);
-    verbs[(int)Anythingbut] = makeverb(Anythingbut,eval_anythingbut,0,VE_STRING);
-    verbs[(int)Anythingbutnot] = makeverb(Anythingbutnot,eval_anythingbutnot,0,VE_STRING);
-    verbs[(int)Something] = makeverb(Something,eval_something,0);
-    verbs[(int)Somethingbut] = makeverb(Somethingbut,eval_somethingbut,0,VE_STRING);
-    verbs[(int)Linebreak] = makeverb(Linebreak,eval_linebreak,0);
-    verbs[(int)Br] = makeverb(Br,eval_br,0);
-    verbs[(int)Tab] = makeverb(Tab,eval_tab,0);
-    verbs[(int)Word] = makeverb(Word,eval_word,0);
-    verbs[(int)Anyof] = makeverb(Anyof,eval_anyof,0,VE_STRING);
-    verbs[(int)Any] = makeverb(Any,eval_any,0,VE_STRING);
-    verbs[(int)Or] = makeverb(Or,eval_or,0);
-    verbs[(int)Begincapture] = makeverb(Begincapture,eval_begincapture,0);
-    verbs[(int)Endcapture] = makeverb(Endcapture,eval_endcapture,0);
-    verbs[(int)Begin] = makeverb(Begin,eval_begin,0);
-    verbs[(int)End] = makeverb(End,eval_end,0);
-    verbs[(int)Either] = makeverb(Either,eval_either,0);
-    verbs[(int)Stop] = makeverb(Stop,eval_stop,0);
+    verbs[index++] = makeverb(Startofline,eval_startofline,0);
+    verbs[index++] = makeverb(Endofline,eval_endofline,0);
+    verbs[index++] = makeverb(Find,eval_find,0,VE_STRING);
+    verbs[index++] = makeverb(Then,eval_then,0,VE_STRING);
+    verbs[index++] = makeverb(Maybe,eval_maybe,0,VE_STRING);
+    verbs[index++] = makeverb(Anything,eval_anything,0,VE_STRING);
+    verbs[index++] = makeverb(Anythingbut,eval_anythingbut,0,VE_STRING);
+    verbs[index++] = makeverb(Anythingbutnot,eval_anythingbutnot,0,VE_STRING);
+    verbs[index++] = makeverb(Something,eval_something,0);
+    verbs[index++] = makeverb(Somethingbut,eval_somethingbut,0,VE_STRING);
+    verbs[index++] = makeverb(Linebreak,eval_linebreak,0);
+    verbs[index++] = makeverb(Br,eval_br,0);
+    verbs[index++] = makeverb(Tab,eval_tab,0);
+    verbs[index++] = makeverb(Word,eval_word,0);
+    verbs[index++] = makeverb(Anyof,eval_anyof,0,VE_STRING);
+    verbs[index++] = makeverb(Any,eval_any,0,VE_STRING);
+    verbs[index++] = makeverb(Or,eval_or,0);
+    verbs[index++] = makeverb(Begincapture,eval_begincapture,0);
+    verbs[index++] = makeverb(Endcapture,eval_endcapture,0);
+    verbs[index++] = makeverb(Begin,eval_begin,0);
+    verbs[index++] = makeverb(End,eval_end,0);
+    verbs[index++] = makeverb(Either,eval_either,0);
+    verbs[index++] = makeverb(Stop,eval_stop,0);
 }
 
 static VEerror

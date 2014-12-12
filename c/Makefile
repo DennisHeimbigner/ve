@@ -1,9 +1,9 @@
-C=ve.c veinternal.c velist.c veparser.c veerr.c
-H=ve.h veinternal.h velist.h
+C=ve.c veinternal.c veparser.c veerr.c velist.c vefile.c
+H=ve.h veinternal.h velist.h vefile.h
 
 LIB=libve.a
 
-CFLAGS="-Wall -Wno-unused-variable -Wno-unused-parameter"
+CFLAGS=-g -O0 -Wall -Wno-unused-variable -Wno-unused-parameter
 
 O=${C:.c=.o}
 

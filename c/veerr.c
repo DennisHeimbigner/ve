@@ -88,10 +88,12 @@ ve_strerror(VEerror veerr1)
 	return "VE: Arity mismatch: verb is called with incorrect number of arguments";
     case VE_EPARSE:
 	return "VE: Failed to parse input";
-    case VE_EUNDEF:
+    case VE_EVERB:
 	return "VE: Undefined verb";
     case VE_ETYPE:
 	return "VE: Verb called with argument of incompatible type";
+    case VE_EVERBS:
+	return "VE: no Verbs specified";
     default: break;
     }
     return "VE: Unknown Error";

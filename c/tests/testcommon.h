@@ -7,6 +7,7 @@ described in the file LICENSE.txt.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "ve.h"
 #include "XGetopt.h"
@@ -29,6 +30,12 @@ static void fatal(const char* msg);
 static char* readfile(FILE* file);
 
 /*************************************************/
+/* static state */
+
+static char* text = NULL;
+static FILE* output;
+
+/*************************************************/
 
 #define OPTIONS "hf:o:W:"
 
@@ -39,7 +46,8 @@ getopts(int argc, char** argv, VEconfiguration* cfg)
     int c;
     char* p;
     FILE* tmp;
-    FILE* infile = NULL;
+    char* infile = NULL;
+    char* outfile = NULL;
     
     /* Initialize */
     memset(cfg,0,sizeof(cfg));
@@ -51,25 +59,12 @@ getopts(int argc, char** argv, VEconfiguration* cfg)
             exit(1);
 	    break;
 	case _T('f'): 
-            // verify readability of input file
-	    if(infile != NULL && infile != stdin) fclose(infile);
-	    if(strcmp(optarg,"-")==0) 
-		infile = stdin;
-	    else
-	        infile = fopen(optarg,"r");
-	    if(infile == NULL)
-                fatal("Input file not readable");
+	    if(infile != NULL) free(infile);
+	    infile = strdup(optarg);
 	    break;
 	case _T('o'):
-            // verify readability of input file
-	    if(cfg->output != NULL) fclose(cfg->output);
-	    if(strcmp(optarg,"-") == 0)
-		cfg->output = stdout;
-	    else {
-	        cfg->output = fopen(optarg,"w");
-	        if(cfg->output == NULL)
-                    fatal("Output file not writeable");
-	    }
+	    if(outfile != NULL) free(outfile);
+	    outfile = strdup(optarg);
 	    break;
 	case _T('W'):
 	    for(p=optarg;(c=*p);p++) {
@@ -97,13 +92,35 @@ getopts(int argc, char** argv, VEconfiguration* cfg)
 	}
     }
 
-    if(infile == NULL && optarg == NULL)
-        fatal("No input specified");
+    if(infile == NULL) {
+	if(optarg == NULL)
+            fatal("No input specified");
+	infile = strdup(optarg);
+    }	
+   
+    if(outfile == NULL)
+	outfile = strdup("-");
 
-    /* Read the whole input file */
-    cfg->input = readfile(infile);
-    if(cfg->input == NULL)
+    if(strcmp(outfile,"-")==0)
+        tmp = stdout;
+    else {
+	tmp = fopen(outfile,"w");
+        if(outfile == NULL)
+            fatal("Output file not writeable");
+    }
+    output = tmp;
+
+    if(strcmp(infile,"-")==0)
+        tmp = stdin;
+    else {
+	tmp = fopen(infile,"r");
+        if(tmp == NULL)
+            fatal("Input file not readable");
+    }
+    text = readfile(tmp);
+    if(text == NULL)
 	fatal("Could not read input");
+    fclose(tmp);
 
     /* Overrides */
     if(DEBUG)

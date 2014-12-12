@@ -8,6 +8,12 @@ described in the file LICENSE.txt.
 
 #include <stdio.h>
 
+#if defined(_CPLUSPLUS_) || defined(__CPLUSPLUS__)
+#define EXTERNC extern "C"
+#else
+#define EXTERNC extern
+#endif
+
 /*!\enum VEerror
 Define the set of error return codes.
 The set consists of ve errors (negative
@@ -16,13 +22,14 @@ are positive.
 */
 typedef enum VEerror {
 VE_NOERR=0,
-VE_EINVAL=1,
-VE_ENOMEM=2,
-VE_EINPUT=3,
-VE_EARITY=4, /* arity mismatch */
-VE_EPARSE=5,
-VE_EUNDEF=6,
-VE_ETYPE=7,
+VE_EINVAL=(-1),
+VE_ENOMEM=(-2),
+VE_EINPUT=(-3),
+VE_EARITY=4, /* arity (-mismatch) */
+VE_EPARSE=(-5),
+VE_ETYPE=(-6),
+VE_EVERB=(-7),
+VE_EVERBS=(-8),
 } VEerror;
 
 typedef enum VEargtype {
@@ -67,8 +74,7 @@ typedef struct VEaction {
 } VEaction;
 
 typedef struct VEconfiguration {
-    char* input; /* whole input file */
-    FILE* output;
+//    FILE* output; /* output target */
     VEverb** verbs; /* null terminated array of pointers to VEverb instances. */
     /* Debug state */
     int verbose;
@@ -79,6 +85,7 @@ typedef struct VEconfiguration {
 
 typedef struct VE {
     VEconfiguration* cfg;
+    char* input;
     VEaction** program;
     VEverb** verbs; /* null terminated; freed by client */
 } VE;
@@ -96,6 +103,7 @@ extern VEerror ve_free_verb(VEverb*);
 extern VEerror ve_init_verb(VEverb* verb, const char*, VEargtype*);
 
 /* API */
+extern VEerror ve_parse(VE* ve, char* input);
 extern VEerror ve_evaluate(VE* ve, void* state);
 
 /* Error/Debug */

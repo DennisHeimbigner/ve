@@ -18,15 +18,27 @@ int velistnull(void* e) {return e == NULL;}
 #define DEFAULTALLOC 16
 #define ALLOCINCR 16
 
-VElist* velistnew(void)
+static int
+velistsetalloc(VElist* l, size_t sz)
+{
+  void** newcontent = NULL;
+  if(l == NULL) return FALSE;
+  if(sz <= 0) {sz = (l->length?2*l->length:DEFAULTALLOC);}
+  if(l->alloc >= sz) {return TRUE;}
+  newcontent=(void**)calloc(sz,sizeof(void*));
+  if(newcontent != NULL && l->alloc > 0 && l->length > 0 && l->content != NULL) {
+    memcpy((void*)newcontent,(void*)l->content,sizeof(void*)*l->length);
+  }
+  if(l->content != NULL) free(l->content);
+  l->content=newcontent;
+  l->alloc=sz;
+  return TRUE;
+}
+
+VElist*
+velistnew(void)
 {
   VElist* l;
-/*
-  if(!ncinitialized) {
-    memset((void*)&ncDATANULL,0,sizeof(void*));
-    ncinitialized = 1;
-  }
-*/
   l = (VElist*)malloc(sizeof(VElist));
   if(l) {
     l->alloc=0;
@@ -47,32 +59,6 @@ velistfree(VElist* l)
   return TRUE;
 }
 
-int
-velistsetalloc(VElist* l, unsigned long sz)
-{
-  void** newcontent = NULL;
-  if(l == NULL) return FALSE;
-  if(sz <= 0) {sz = (l->length?2*l->length:DEFAULTALLOC);}
-  if(l->alloc >= sz) {return TRUE;}
-  newcontent=(void**)calloc(sz,sizeof(void*));
-  if(newcontent != NULL && l->alloc > 0 && l->length > 0 && l->content != NULL) {
-    memcpy((void*)newcontent,(void*)l->content,sizeof(void*)*l->length);
-  }
-  if(l->content != NULL) free(l->content);
-  l->content=newcontent;
-  l->alloc=sz;
-  return TRUE;
-}
-
-int
-velistsetlength(VElist* l, unsigned long sz)
-{
-  if(l == NULL) return FALSE;
-  if(sz > l->alloc && !velistsetalloc(l,sz)) return FALSE;
-  l->length = sz;
-  return TRUE;
-}
-
 void*
 velistget(VElist* l, unsigned long index)
 {
@@ -82,64 +68,13 @@ velistget(VElist* l, unsigned long index)
 }
 
 int
-velistset(VElist* l, unsigned long index, void* elem)
-{
-  if(l == NULL) return FALSE;
-  if(index >= l->length) return FALSE;
-  l->content[index] = elem;
-  return TRUE;
-}
-
-/* Insert at position i of l; will push up elements i..|seq|. */
-int
-velistinsert(VElist* l, unsigned long index, void* elem)
-{
-  int i; /* do not make unsigned */
-  if(l == NULL) return FALSE;
-  if(index > l->length) return FALSE;
-  velistsetalloc(l,0);
-  for(i=(int)l->length;i>index;i--) l->content[i] = l->content[i-1];
-  l->content[index] = elem;
-  l->length++;
-  return TRUE;
-}
-
-int
-velistpush(VElist* l, void* elem)
+velistadd(VElist* l, void* elem)
 {
   if(l == NULL) return FALSE;
   if(l->length >= l->alloc) velistsetalloc(l,0);
   l->content[l->length] = elem;
   l->length++;
   return TRUE;
-}
-
-void*
-velistpop(VElist* l)
-{
-  if(l == NULL || l->length == 0) return NULL;
-  l->length--;  
-  return l->content[l->length];
-}
-
-void*
-velisttop(VElist* l)
-{
-  if(l == NULL || l->length == 0) return NULL;
-  return l->content[l->length - 1];
-}
-
-void*
-velistremove(VElist* l, unsigned long i)
-{
-  unsigned long len;
-  void* elem;
-  if(l == NULL || (len=l->length) == 0) return NULL;
-  if(i >= len) return NULL;
-  elem = l->content[i];
-  for(i+=1;i<len;i++) l->content[i-1] = l->content[i];
-  l->length--;
-  return elem;  
 }
 
 /* Duplicate and return the content (null terminate) */
@@ -152,70 +87,3 @@ velistdup(VElist* l)
     return result;
 }
 
-int
-velistcontains(VElist* l, void* elem)
-{
-    unsigned long i;
-    for(i=0;i<velistlength(l);i++) {
-	if(elem == velistget(l,i)) return 1;
-    }
-    return 0;
-}
-
-/* Remove element by value; only removes first encountered */
-int
-velistelemremove(VElist* l, void* elem)
-{
-  unsigned long len;
-  unsigned long i;
-  int found = 0;
-  if(l == NULL || (len=l->length) == 0) return 0;
-  for(i=0;i<velistlength(l);i++) {
-    void* candidate = l->content[i];
-    if(elem == candidate) {
-      for(i+=1;i<len;i++) l->content[i-1] = l->content[i];
-      l->length--;
-      found = 1;
-      break;
-    }
-  }
-  return found;
-}
-
-
-
-
-/* Extends velist to include a unique operator 
-   which remove duplicate values; NULL values removed
-   return value is always 1.
-*/
-
-int
-velistunique(VElist* l)
-{
-    unsigned long i,j,k,len;
-    void** content;
-    if(l == NULL || l->length == 0) return 1;
-    len = l->length;
-    content = l->content;
-    for(i=0;i<len;i++) {
-        for(j=i+1;j<len;j++) {
-	    if(content[i] == content[j]) {
-		/* compress out jth element */
-                for(k=j+1;k<len;k++) content[k-1] = content[k];	
-		len--;
-	    }
-	}
-    }
-    l->length = len;
-    return 1;
-}
-
-VElist*
-velistclone(VElist* l)
-{
-    VElist* clone = velistnew();
-    *clone = *l;
-    clone->content = velistdup(l);
-    return clone;
-}

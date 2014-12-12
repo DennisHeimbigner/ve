@@ -8,6 +8,7 @@ described in the file LICENSE.txt.
 /* Forward */
 typedef struct Teststate Teststate;
 
+static void validate(VEconfiguration* cfg);
 static void loadverbs(VEconfiguration* cfg);
 static void* createstate(VEconfiguration* cfg);
 static void printstate(VEconfiguration* cfg, void* state);
@@ -23,9 +24,13 @@ main(int argc, char** argv)
 
     getopts(argc,argv,&cfg);
     loadverbs(&cfg);
+    validate(&cfg);
+
     state = createstate(&cfg);
 
     stat = ve_new_ve(&cfg,&ve);
+    if(stat != VE_NOERR) goto fail;
+    stat = ve_parse(ve,text);
     if(stat != VE_NOERR) goto fail;
     stat = ve_evaluate(ve,state);
     if(stat != VE_NOERR) goto fail;
@@ -34,6 +39,13 @@ main(int argc, char** argv)
 fail:
     statfatal(stat);
     exit(1);
+}
+
+static void
+validate(VEconfiguration* cfg)
+{
+    if(cfg->verbs == NULL)
+	fatal("No verbs specified");
 }
 
 /**************************************************/
@@ -150,30 +162,31 @@ loadverbs(VEconfiguration* cfg)
     VEverb** verbs;
     cfg->verbs = (VEverb**)malloc(sizeof(VEverb*)*(MAX+1));
     verbs = cfg->verbs;
+    int index = 0;
     
-    verbs[(int)Startofline] = makeverb(Startofline,0);
-    verbs[(int)Endofline] = makeverb(Endofline,0);
-    verbs[(int)Find] = makeverb(Find,0,VE_STRING);
-    verbs[(int)Then] = makeverb(Then,0,VE_STRING);
-    verbs[(int)Maybe] = makeverb(Maybe,0,VE_STRING);
-    verbs[(int)Anything] = makeverb(Anything,0,VE_STRING);
-    verbs[(int)Anythingbut] = makeverb(Anythingbut,0,VE_STRING);
-    verbs[(int)Anythingbutnot] = makeverb(Anythingbutnot,0,VE_STRING);
-    verbs[(int)Something] = makeverb(Something,0);
-    verbs[(int)Somethingbut] = makeverb(Somethingbut,0,VE_STRING);
-    verbs[(int)Linebreak] = makeverb(Linebreak,0);
-    verbs[(int)Br] = makeverb(Br,0);
-    verbs[(int)Tab] = makeverb(Tab,0);
-    verbs[(int)Word] = makeverb(Word,0);
-    verbs[(int)Anyof] = makeverb(Anyof,0,VE_STRING);
-    verbs[(int)Any] = makeverb(Any,0,VE_STRING);
-    verbs[(int)Or] = makeverb(Or,0);
-    verbs[(int)Begincapture] = makeverb(Begincapture,0);
-    verbs[(int)Endcapture] = makeverb(Endcapture,0);
-    verbs[(int)Begin] = makeverb(Begin,0);
-    verbs[(int)End] = makeverb(End,0);
-    verbs[(int)Either] = makeverb(Either,0);
-    verbs[(int)Stop] = makeverb(Stop,0);
+    verbs[index++] = makeverb(Startofline,0);
+    verbs[index++] = makeverb(Endofline,0);
+    verbs[index++] = makeverb(Find,0,VE_STRING);
+    verbs[index++] = makeverb(Then,0,VE_STRING);
+    verbs[index++] = makeverb(Maybe,0,VE_STRING);
+    verbs[index++] = makeverb(Anything,0,VE_STRING);
+    verbs[index++] = makeverb(Anythingbut,0,VE_STRING);
+    verbs[index++] = makeverb(Anythingbutnot,0,VE_STRING);
+    verbs[index++] = makeverb(Something,0);
+    verbs[index++] = makeverb(Somethingbut,0,VE_STRING);
+    verbs[index++] = makeverb(Linebreak,0);
+    verbs[index++] = makeverb(Br,0);
+    verbs[index++] = makeverb(Tab,0);
+    verbs[index++] = makeverb(Word,0);
+    verbs[index++] = makeverb(Anyof,0,VE_STRING);
+    verbs[index++] = makeverb(Any,0,VE_STRING);
+    verbs[index++] = makeverb(Or,0);
+    verbs[index++] = makeverb(Begincapture,0);
+    verbs[index++] = makeverb(Endcapture,0);
+    verbs[index++] = makeverb(Begin,0);
+    verbs[index++] = makeverb(End,0);
+    verbs[index++] = makeverb(Either,0);
+    verbs[index++] = makeverb(Stop,0);
 }
 
 static VEerror

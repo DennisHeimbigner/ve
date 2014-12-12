@@ -1,6 +1,6 @@
 #VG=valgrind --leak-check=full
 
-SRC=test2.c
+SRC=test1.c
 HD=testcommon.h 
 
 CPPFLAGS=-I..
@@ -16,7 +16,7 @@ T=${O:.o=.exe}
 
 all: ${T}
 
-${T}: ${O}
+${T}: ${O} ${H} ${LDFLAGS}
 
 
 clean::

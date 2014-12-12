@@ -422,7 +422,7 @@ parseR(VEparser* vep, VElist* actions)
         case TOKEN_WORD: /* Verb*/
             name = lexer->yytext.text;
 	    stat = ve_lookup(vep->ve,name,&verb);
-            if(stat == VE_EUNDEF) {
+            if(stat == VE_EVERB) {
                 fprintf(stderr,"Unknown verb: %s", name);
 	        reportposition(lexer->yypos);
 	        goto done;
@@ -433,7 +433,7 @@ parseR(VEparser* vep, VElist* actions)
 	    action->argv = (VEarg*)malloc(sizeof(VEarg)*(verb->arity));
             stat = collectargs(action, vep, verb->arity,action->argv);
 	    if(stat != VE_NOERR) goto done;
-            velistpush(actions,action);
+            velistadd(actions,action);
             break;
         default:
 	    stat = VE_EPARSE;

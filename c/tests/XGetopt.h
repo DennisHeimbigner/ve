@@ -17,7 +17,9 @@
 #ifndef XGETOPT_H
 #define XGETOPT_H
 
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
+#endif
 #include <stdio.h>
 
 /* replace tchar.h */

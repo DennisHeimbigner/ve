@@ -8,6 +8,13 @@ described in the file LICENSE.txt.
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+
+#if defined _WIN32 || defined _WIN64
+#define strcasecmp _stricmp
+#else
+#include <strings.h>
+#endif
+
 #include "ve.h"
 #include "velist.h"
 #include "veinternal.h"
@@ -69,14 +76,14 @@ ve_lookup(VE* ve, const char* name, VEverb** verbp)
 
     if(ve == NULL || name == NULL)
 	return VE_EINVAL;
-    for(p=ve->verbs;*p;p++) {
+    for(p=ve->verbs;*p;p++) {/* Assumes a compact verb set */
 	verb = *p;
-	if(strcmp(verb->name,name) == 0)
+	if(strcasecmp(verb->name,name) == 0)
 	    break;
 	verb = NULL;
     }
     if(verbp) *verbp = verb;
-    return (verb == NULL ? VE_EUNDEF : VE_NOERR);
+    return (verb == NULL ? VE_EVERB : VE_NOERR);
 }
 
 VEerror
